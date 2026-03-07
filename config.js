@@ -24,7 +24,7 @@ PRODUCTS: [
   { id: 8, image_url: "https://raw.githubusercontent.com/GMCFNINJA/pennysales/main/assets/icons/VAPES/8.png" },
   { id: 9, image_url: "https://raw.githubusercontent.com/GMCFNINJA/pennysales/main/assets/icons/VAPES/9.png" },
   { id: 10, image_url: "https://raw.githubusercontent.com/GMCFNINJA/pennysales/main/assets/icons/VAPES/10.png" }
-]
+],
 
   PRICE_OPTIONS: [20, 15, 17]
 };
