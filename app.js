@@ -20,8 +20,7 @@ const el = {
   salesList: document.getElementById("salesList"),
   bottomBar: document.getElementById("bottomBar"),
   modalOverlay: document.getElementById("modalOverlay"),
-  modalContainer: document.getElementById("modalContainer"),
-  exportCsvBtn: document.getElementById("exportCsvBtn")
+  modalContainer: document.getElementById("modalContainer")
 };
 
 function formatMoney(value) {
@@ -94,7 +93,9 @@ function alertModal(message, title = "Aviso") {
   openModal(`
     <div class="modal-top">
       <h2 class="modal-title">${escapeHtml(title)}</h2>
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
     </div>
     <div class="info-row">
       <div class="info-value">${escapeHtml(message)}</div>
@@ -109,7 +110,9 @@ function confirmModal(message, onConfirm, title = "Confirmar") {
   openModal(`
     <div class="modal-top">
       <h2 class="modal-title">${escapeHtml(title)}</h2>
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
     </div>
     <div class="info-row">
       <div class="info-value">${escapeHtml(message)}</div>
@@ -172,9 +175,13 @@ function renderHome() {
     <div class="product-row">
       <div class="product-id">${product.id}</div>
       <img class="product-photo" src="${product.image_url}" alt="Produto ${product.id}" />
-      <button class="stock-btn" data-action="increase-stock" data-id="${product.id}">+</button>
+      <button class="stock-btn" data-action="increase-stock" data-id="${product.id}">
+        <img src="${APP_CONFIG.NAV_ICONS.plus}" alt="Adicionar" class="icon-img icon-btn" />
+      </button>
       <div class="stock-value">${product.stock}</div>
-      <button class="stock-btn" data-action="open-sale" data-id="${product.id}" ${Number(product.stock) <= 0 ? "disabled" : ""}>-</button>
+      <button class="stock-btn" data-action="open-sale" data-id="${product.id}" ${Number(product.stock) <= 0 ? "disabled" : ""}>
+        <img src="${APP_CONFIG.NAV_ICONS.minus}" alt="Vender" class="icon-img icon-btn" />
+      </button>
     </div>
   `).join("");
 }
@@ -184,7 +191,10 @@ function renderAffiliates() {
 
   cards.push(`
     <div class="add-affiliate-card" data-action="open-add-affiliate">
-      <div>+ Adicionar afiliado</div>
+      <div class="add-affiliate-inner">
+        <img src="${APP_CONFIG.NAV_ICONS.plus}" alt="Adicionar" class="icon-img icon-add-affiliate" />
+        <div>Adicionar afiliado</div>
+      </div>
     </div>
   `);
 
@@ -200,9 +210,15 @@ function renderAffiliates() {
             <div class="affiliate-sales">Vendas: ${affiliate.sales_count}</div>
           </div>
           <div class="affiliate-actions">
-            <button class="small-action-btn" data-action="affiliate-plus" data-id="${affiliate.id}">+</button>
-            <button class="small-action-btn" data-action="affiliate-minus" data-id="${affiliate.id}">-</button>
-            <button class="small-action-btn remove" data-action="affiliate-remove" data-id="${affiliate.id}">✕</button>
+            <button class="small-action-btn" data-action="affiliate-plus" data-id="${affiliate.id}">
+              <img src="${APP_CONFIG.NAV_ICONS.plus}" alt="Mais" class="icon-img icon-small-btn" />
+            </button>
+            <button class="small-action-btn" data-action="affiliate-minus" data-id="${affiliate.id}">
+              <img src="${APP_CONFIG.NAV_ICONS.minus}" alt="Menos" class="icon-img icon-small-btn" />
+            </button>
+            <button class="small-action-btn remove" data-action="affiliate-remove" data-id="${affiliate.id}">
+              <img src="${APP_CONFIG.NAV_ICONS.removeAffiliate}" alt="Remover" class="icon-img icon-remove-affiliate" />
+            </button>
           </div>
         </div>
       `);
@@ -279,7 +295,9 @@ function saleModal(productId) {
 
   openModal(`
     <div class="modal-top">
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
       <h2 class="modal-title">Registar venda</h2>
       <div style="width:34px"></div>
     </div>
@@ -417,7 +435,9 @@ function withdrawModal(personName) {
   openModal(`
     <div class="modal-top">
       <h2 class="modal-title">Levantar</h2>
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
     </div>
 
     <div class="info-grid">
@@ -489,7 +509,9 @@ function saleInfoModal(saleId) {
   openModal(`
     <div class="modal-top">
       <h2 class="modal-title">Info da venda</h2>
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
     </div>
 
     <div class="info-grid">
@@ -559,7 +581,9 @@ function observationEditorModal(sale) {
   openModal(`
     <div class="obs-editor-shell">
       <div class="obs-editor-top">
-        <button class="circle-btn large" data-close-modal="true">✕</button>
+        <button class="icon-plain-btn" data-close-modal="true">
+          <img src="${APP_CONFIG.NAV_ICONS.closeLarge}" alt="Cancelar edição" class="icon-img icon-close-large" />
+        </button>
         <div class="modal-title">Observações</div>
         <button class="circle-btn large" id="saveObsBtn" data-busy-lock="true">✔</button>
       </div>
@@ -590,7 +614,9 @@ function addAffiliateModal() {
   openModal(`
     <div class="modal-top">
       <h2 class="modal-title">Adicionar afiliado</h2>
-      <button class="circle-btn" data-close-modal="true">✕</button>
+      <button class="circle-btn" data-close-modal="true">
+        <img src="${APP_CONFIG.NAV_ICONS.closeSmall}" alt="Fechar" class="icon-img icon-close-small" />
+      </button>
     </div>
 
     <div class="form-group">
@@ -651,55 +677,6 @@ async function changeAffiliateCount(id, delta) {
   } catch (error) {
     alertModal(readErrorMessage(error));
   }
-}
-
-function exportCSV() {
-  if (!state.sales.length) {
-    alertModal("Não existem vendas para exportar.");
-    return;
-  }
-
-  const rows = [
-    [
-      "id",
-      "product_id",
-      "price",
-      "client",
-      "sale_date",
-      "sale_time",
-      "payment_status",
-      "payment_method",
-      "observations"
-    ]
-  ];
-
-  state.sales.forEach(sale => {
-    rows.push([
-      sale.id,
-      sale.product_id,
-      sale.price,
-      sale.client,
-      sale.sale_date,
-      sale.sale_time,
-      sale.payment_status,
-      sale.payment_method,
-      (sale.observations || "").replace(/\n/g, " ")
-    ]);
-  });
-
-  const csv = rows
-    .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
-    .join("\n");
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `vendas_${nowDateISO()}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
 }
 
 function bindEvents() {
@@ -784,8 +761,6 @@ function bindEvents() {
       closeModal();
     }
   });
-
-  el.exportCsvBtn.addEventListener("click", exportCSV);
 }
 
 async function initApp() {
