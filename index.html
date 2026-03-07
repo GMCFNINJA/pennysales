@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PennySales</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="app-top">
+      <div class="app-brand">PennySales</div>
+      <button id="exportCsvBtn" class="ghost-btn">Exportar CSV</button>
+    </header>
 
+    <main class="pages">
+      <section id="page-affiliates" class="page hidden">
+        <div class="page-inner">
+          <h1 class="page-title">Afiliados</h1>
+          <div id="affiliatesList" class="affiliate-list"></div>
+        </div>
+      </section>
+
+      <section id="page-home" class="page">
+        <div class="page-inner">
+          <h1 class="page-title">Inventário</h1>
+          <div id="productsList" class="products-list"></div>
+        </div>
+      </section>
+
+      <section id="page-cart" class="page hidden">
+        <div class="cart-layout">
+          <div id="balancesTop" class="balances-top"></div>
+          <div id="salesList" class="sales-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-bar" id="bottomBar">
+      <button class="nav-btn" data-page="affiliates">
+        <span class="nav-icon-wrap">
+          <img src="assets/icons/affiliates.png" alt="Afiliados" class="nav-icon" />
+        </span>
+        <span class="nav-label">Afiliados</span>
+      </button>
+
+      <button class="nav-btn nav-btn-center active" data-page="home">
+        <span class="nav-center-circle">
+          <img src="assets/icons/logo.png" alt="Home" class="nav-icon nav-icon-center" />
+        </span>
+      </button>
+
+      <button class="nav-btn" data-page="cart">
+        <span class="nav-icon-wrap">
+          <img src="assets/icons/cart.png" alt="Carrinho" class="nav-icon" />
+        </span>
+        <span class="nav-label">Carrinho</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div id="modalContainer" class="modal-container"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
