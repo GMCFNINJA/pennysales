@@ -1,68 +1,1427 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PennyVapesV2</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>PennySales</title>
+
+  <style>
+    :root{
+      --bg:#f5f5f7;
+      --card:#ffffff;
+      --text:#111111;
+      --muted:#6e6e73;
+      --line:#e5e5ea;
+      --black:#111111;
+      --red:#ff3b30;
+      --green:#34c759;
+      --blue:#007aff;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+      --radius:18px;
+      --nav-h:88px;
+    }
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
+    body{padding-bottom:calc(var(--nav-h) + 20px)}
+    button,input,select,textarea{font:inherit}
+
+    .app{
+      max-width:560px;
+      margin:0 auto;
+      min-height:100vh;
+      background:var(--bg);
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(245,245,247,.92);
+      backdrop-filter:blur(10px);
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(229,229,234,.9);
+    }
+
+    .title{
+      margin:0;
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+
+    .subtitle{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .screen{
+      display:none;
+      padding:12px 12px 0;
+    }
+
+    .screen.active{
+      display:block;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .inventory-list,
+    .sales-list,
+    .affiliate-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .inventory-row{
+      display:grid;
+      grid-template-columns:34px 54px 40px 1fr 40px 82px;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+    }
+
+    .product-id{
+      font-weight:800;
+      font-size:16px;
+      text-align:left;
+    }
+
+    .product-img{
+      width:54px;
+      height:54px;
+      object-fit:contain;
+      border-radius:14px;
+      background:#fafafa;
+      border:1px solid var(--line);
+      padding:4px;
+    }
+
+    .qty{
+      text-align:center;
+      font-weight:800;
+      font-size:18px;
+    }
+
+    .icon-btn,
+    .sell-btn,
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .small-btn{
+      border:none;
+      border-radius:16px;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+
+    .icon-btn:active,
+    .sell-btn:active,
+    .primary-btn:active,
+    .secondary-btn:active,
+    .danger-btn:active,
+    .small-btn:active{
+      transform:scale(.97);
+    }
+
+    .icon-btn{
+      width:40px;
+      height:40px;
+      font-size:22px;
+      font-weight:700;
+      background:#f0f0f3;
+      color:var(--text);
+      border:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+    }
+
+    .icon-btn:disabled,
+    .sell-btn:disabled,
+    .primary-btn:disabled,
+    .secondary-btn:disabled,
+    .danger-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .sell-btn{
+      height:40px;
+      padding:0 12px;
+      background:var(--black);
+      color:#fff;
+      font-weight:800;
+      font-size:13px;
+      letter-spacing:.02em;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:1fr 1px 1fr;
+      gap:0;
+      padding:14px;
+      margin-bottom:12px;
+    }
+
+    .summary-divider{
+      background:var(--line);
+      width:1px;
+    }
+
+    .summary-box{
+      padding:4px 10px;
+      cursor:pointer;
+    }
+
+    .summary-name{
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .summary-line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:13px;
+      color:var(--muted);
+      margin:6px 0;
+    }
+
+    .summary-line strong{
+      color:var(--text);
+      font-weight:800;
+    }
+
+    .sale-card{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:12px;
+      cursor:pointer;
+    }
+
+    .sale-thumb{
+      width:58px;
+      height:58px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fafafa;
+      object-fit:contain;
+      padding:4px;
+      flex:0 0 auto;
+    }
+
+    .sale-meta{
+      min-width:0;
+      flex:1;
+    }
+
+    .sale-date{
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .sale-sep{
+      height:1px;
+      background:var(--line);
+      margin:0 12px;
+    }
+
+    .load-more-wrap{
+      padding:14px 0 4px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn{
+      height:48px;
+      padding:0 16px;
+      font-weight:800;
+      width:100%;
+      border-radius:16px;
+    }
+
+    .primary-btn{
+      background:var(--black);
+      color:#fff;
+    }
+
+    .secondary-btn{
+      background:#f0f0f3;
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .danger-btn{
+      background:var(--red);
+      color:#fff;
+    }
+
+    .small-btn{
+      min-width:44px;
+      height:36px;
+      padding:0 12px;
+      background:#f0f0f3;
+      border:1px solid var(--line);
+      font-weight:800;
+    }
+
+    .affiliate-row{
+      display:grid;
+      grid-template-columns:48px 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:12px;
+    }
+
+    .affiliate-avatar{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid var(--line);
+      background:#fafafa;
+      padding:6px;
+    }
+
+    .affiliate-name{
+      font-weight:800;
+      font-size:15px;
+    }
+
+    .affiliate-sales{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:4px;
+    }
+
+    .affiliate-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .remove-btn{
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:14px;
+      background:#fff1f0;
+      border:1px solid #ffd9d6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      cursor:pointer;
+    }
+
+    .remove-btn img{
+      width:18px;
+      height:18px;
+    }
+
+    .fab-add{
+      position:fixed;
+      right:18px;
+      bottom:110px;
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      border:none;
+      background:var(--black);
+      color:#fff;
+      font-size:28px;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      z-index:25;
+    }
+
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.38);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:60;
+    }
+
+    .modal-backdrop.show{
+      display:flex;
+    }
+
+    .modal{
+      width:min(100%, 460px);
+      max-height:88vh;
+      overflow:auto;
+      background:#fff;
+      border-radius:24px;
+      box-shadow:0 20px 60px rgba(0,0,0,.22);
+      padding:16px;
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .modal-title{
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.02em;
+      margin:0;
+    }
+
+    .close-btn{
+      width:38px;
+      height:38px;
+      border:none;
+      background:#f4f4f6;
+      border-radius:50%;
+      padding:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      border:1px solid var(--line);
+    }
+
+    .close-btn img{
+      width:18px;
+      height:18px;
+    }
+
+    .field{
+      margin-bottom:12px;
+    }
+
+    .field label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .input,
+    .select,
+    .textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fafafa;
+      border-radius:16px;
+      padding:14px 14px;
+      outline:none;
+      font-size:16px;
+      color:var(--text);
+    }
+
+    .textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .row-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .detail-top{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .detail-img{
+      width:84px;
+      height:84px;
+      object-fit:contain;
+      border-radius:20px;
+      background:#fafafa;
+      border:1px solid var(--line);
+      padding:6px;
+    }
+
+    .detail-id{
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .detail-date{
+      font-size:15px;
+      font-weight:800;
+      margin-top:4px;
+    }
+
+    .detail-grid{
+      display:grid;
+      gap:10px;
+    }
+
+    .detail-item{
+      padding:12px 14px;
+      background:#fafafa;
+      border:1px solid var(--line);
+      border-radius:18px;
+    }
+
+    .detail-label{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .detail-value{
+      font-size:16px;
+      font-weight:700;
+      word-break:break-word;
+    }
+
+    .obs-box{
+      padding:12px 14px;
+      background:#fafafa;
+      border:1px solid var(--line);
+      border-radius:18px;
+    }
+
+    .obs-actions{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .nav{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:0;
+      width:min(100%,560px);
+      height:var(--nav-h);
+      padding:12px 20px calc(12px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.95);
+      backdrop-filter:blur(12px);
+      border-top:1px solid rgba(229,229,234,.9);
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      align-items:end;
+      z-index:40;
+    }
+
+    .nav-btn{
+      border:none;
+      background:none;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:var(--muted);
+      cursor:pointer;
+      padding:0;
+    }
+
+    .nav-btn img{
+      width:23px;
+      height:23px;
+      object-fit:contain;
+    }
+
+    .nav-btn span{
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .nav-btn.active{
+      color:var(--text);
+    }
+
+    .nav-home-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .nav-home{
+      width:68px;
+      height:68px;
+      border-radius:50%;
+      border:none;
+      background:#fff;
+      box-shadow:0 8px 28px rgba(0,0,0,.16);
+      border:1px solid var(--line);
+      margin-top:-22px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+    }
+
+    .nav-home img{
+      width:40px;
+      height:40px;
+      object-fit:contain;
+    }
+
+    .empty{
+      padding:22px 16px;
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .mb-12{margin-bottom:12px}
+    .mb-16{margin-bottom:16px}
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    @media (max-width:390px){
+      .inventory-row{
+        grid-template-columns:28px 46px 36px 1fr 36px 72px;
+        gap:8px;
+        padding:10px;
+      }
+      .product-img{width:46px;height:46px}
+      .sell-btn{font-size:12px;padding:0 8px}
+      .icon-btn{width:36px;height:36px}
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <header class="app-top">
-      <div class="app-brand">PennyVapesV2</div>
+  <div class="app">
+    <header class="topbar">
+      <h1 class="title" id="pageTitle">Inventário</h1>
+      <p class="subtitle" id="pageSubtitle">Gestão simples e rápida</p>
     </header>
 
-    <main class="pages">
-      <section id="page-affiliates" class="page hidden">
-        <div class="page-inner">
-          <h1 class="page-title">Afiliados</h1>
-          <div id="affiliatesList" class="affiliate-list"></div>
+    <main>
+      <!-- HOME -->
+      <section id="screen-home" class="screen active">
+        <div id="inventoryList" class="inventory-list"></div>
+      </section>
+
+      <!-- CART -->
+      <section id="screen-cart" class="screen">
+        <div class="card summary-grid">
+          <div class="summary-box" onclick="openWithdraw('Tomás Alony')">
+            <div class="summary-name">Tomás Alony</div>
+            <div class="summary-line"><span>Saldo atual</span><strong id="saldo-alony">0,00€</strong></div>
+            <div class="summary-line"><span>Total levantado</span><strong id="withdrawn-alony">0,00€</strong></div>
+            <div class="summary-line"><span>Lucro total</span><strong id="profit-alony">0,00€</strong></div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-box" onclick="openWithdraw('Tomás Silva')">
+            <div class="summary-name">Tomás Silva</div>
+            <div class="summary-line"><span>Saldo atual</span><strong id="saldo-silva">0,00€</strong></div>
+            <div class="summary-line"><span>Total levantado</span><strong id="withdrawn-silva">0,00€</strong></div>
+            <div class="summary-line"><span>Lucro total</span><strong id="profit-silva">0,00€</strong></div>
+          </div>
+        </div>
+
+        <div id="salesList" class="sales-list"></div>
+
+        <div class="load-more-wrap">
+          <button id="loadMoreSalesBtn" class="secondary-btn hidden" onclick="loadMoreSales()">Carregar mais</button>
         </div>
       </section>
 
-      <section id="page-home" class="page">
-        <div class="page-inner">
-          <h1 class="page-title">Inventário</h1>
-          <div id="productsList" class="products-list"></div>
+      <!-- AFFILIATES -->
+      <section id="screen-affiliates" class="screen">
+        <div class="top-actions">
+          <button class="secondary-btn" onclick="openAffiliateCreate()">Adicionar afiliado</button>
         </div>
-      </section>
-
-      <section id="page-cart" class="page hidden">
-        <div class="cart-layout">
-          <div id="balancesTop" class="balances-top"></div>
-          <div id="salesList" class="sales-list"></div>
-        </div>
+        <div class="mb-12"></div>
+        <div id="affiliateList" class="affiliate-list"></div>
       </section>
     </main>
-
-    <nav class="bottom-bar" id="bottomBar">
-      <button class="nav-btn" data-page="affiliates" type="button">
-        <span class="nav-icon-wrap">
-          <img src="https://cdn-icons.flaticon.com/svg/3914/3914353.svg?token=exp=1772852441~hmac=d6acec0f93e211755c88b63de250549a" alt="Afiliados" class="nav-icon" />
-        </span>
-      </button>
-
-      <button class="nav-btn nav-btn-center active" data-page="home" type="button">
-        <span class="nav-center-circle">
-          <img src="assets/icons/logo.png" alt="Home" class="nav-icon nav-icon-center" />
-        </span>
-      </button>
-
-      <button class="nav-btn" data-page="cart" type="button">
-        <span class="nav-icon-wrap">
-          <img src="https://cdn-icons.flaticon.com/svg/3916/3916598.svg?token=exp=1772852544~hmac=38f628a9fe1f0aa826a479342abe2720" alt="Carrinho" class="nav-icon" />
-        </span>
-      </button>
-    </nav>
   </div>
 
-  <div id="modalOverlay" class="modal-overlay hidden">
-    <div id="modalContainer" class="modal-container"></div>
+  <button id="fabAddAffiliate" class="fab-add hidden" onclick="openAffiliateCreate()">+</button>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn" id="nav-affiliates" onclick="setScreen('affiliates')">
+      <img src="https://cdn-icons.flaticon.com/svg/3914/3914353.svg?token=exp=1772852441~hmac=d6acec0f93e211755c88b63de250549a" alt="Afiliados">
+      <span>Afiliados</span>
+    </button>
+
+    <div class="nav-home-wrap">
+      <button class="nav-home" id="nav-home" onclick="setScreen('home')">
+        <img src="https://raw.githubusercontent.com/GMCFNINJA/pennysales/main/assets/icons/logo.png" alt="Home">
+      </button>
+    </div>
+
+    <button class="nav-btn" id="nav-cart" onclick="setScreen('cart')">
+      <img src="https://cdn-icons.flaticon.com/svg/3916/3916598.svg?token=exp=1772852544~hmac=38f628a9fe1f0aa826a479342abe2720" alt="Carrinho">
+      <span>Carrinho</span>
+    </button>
+  </nav>
+
+  <!-- MODAL BACKDROP -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modalBox"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="supabase.js"></script>
-  <script src="app.js"></script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // ==================================================
+    // CONFIG SUPABASE
+    // ==================================================
+    const SUPABASE_URL = 'COLOCA_AQUI_A_TUA_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'COLOCA_AQUI_A_TUA_SUPABASE_ANON_KEY';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ==================================================
+    // ESTADO
+    // ==================================================
+    const COST_PRICE = 9.5;
+    const PEOPLE = ['Tomás Alony', 'Tomás Silva'];
+    const PRODUCT_COUNT = 15;
+    const AFFILIATE_DEFAULT_IMG = 'https://cdn-icons.flaticon.com/svg/9821/9821492.svg?token=exp=1772852618~hmac=5d2d935c02f2697ad26854de412d2de1';
+    const CLOSE_ICON = 'https://cdn-icons.flaticon.com/svg/3917/3917206.svg?token=exp=1772852318~hmac=316bec7c11f86712086688a1f84754a9';
+    const CANCEL_EDIT_ICON = 'https://cdn-icons.flaticon.com/svg/3917/3917189.svg?token=exp=1772852318~hmac=604a7180355fdbe2e878afd26859eb54';
+    const REMOVE_ICON = 'https://cdn-icons.flaticon.com/svg/3914/3914336.svg?token=exp=1772852506~hmac=2acd468db29dbd4c5ea302717872ce21';
+
+    let currentScreen = 'home';
+    let salesOffset = 0;
+    let salesLimit = 20;
+    let salesHasMore = false;
+
+    // ==================================================
+    // HELPERS
+    // ==================================================
+    function euro(value){
+      return `${Number(value || 0).toFixed(2).replace('.', ',')}€`;
+    }
+
+    function productImage(id){
+      return `https://raw.githubusercontent.com/GMCFNINJA/pennysales/main/assets/icons/VAPES/${id}.png`;
+    }
+
+    function esc(str){
+      return String(str ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDate(dateStr, timeStr=''){
+      if (!dateStr) return '-';
+      const d = new Date(`${dateStr}T${timeStr || '00:00:00'}`);
+      if (Number.isNaN(d.getTime())) return `${dateStr} ${timeStr || ''}`.trim();
+      return d.toLocaleString('pt-PT', {
+        day:'2-digit',
+        month:'2-digit',
+        year:'numeric',
+        hour:'2-digit',
+        minute:'2-digit'
+      });
+    }
+
+    function todayDate(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function nowTime(){
+      const d = new Date();
+      const h = String(d.getHours()).padStart(2,'0');
+      const m = String(d.getMinutes()).padStart(2,'0');
+      const s = String(d.getSeconds()).padStart(2,'0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function profitPerPerson(salePrice){
+      return (Number(salePrice) - COST_PRICE) / 2;
+    }
+
+    function closeModal(){
+      document.getElementById('modalBackdrop').classList.remove('show');
+      document.getElementById('modalBox').innerHTML = '';
+    }
+
+    function openModal(html){
+      document.getElementById('modalBox').innerHTML = html;
+      document.getElementById('modalBackdrop').classList.add('show');
+    }
+
+    document.getElementById('modalBackdrop').addEventListener('click', (e)=>{
+      if(e.target.id === 'modalBackdrop') closeModal();
+    });
+
+    function setScreen(screen){
+      currentScreen = screen;
+
+      document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+      document.getElementById(`screen-${screen}`).classList.add('active');
+
+      document.getElementById('nav-affiliates').classList.toggle('active', screen === 'affiliates');
+      document.getElementById('nav-cart').classList.toggle('active', screen === 'cart');
+
+      const pageTitle = document.getElementById('pageTitle');
+      const pageSubtitle = document.getElementById('pageSubtitle');
+      const fab = document.getElementById('fabAddAffiliate');
+
+      if(screen === 'home'){
+        pageTitle.textContent = 'Inventário';
+        pageSubtitle.textContent = '15 produtos';
+        fab.classList.add('hidden');
+      }else if(screen === 'cart'){
+        pageTitle.textContent = 'Carrinho';
+        pageSubtitle.textContent = 'Saldos e vendas';
+        fab.classList.add('hidden');
+        reloadSales(true);
+        loadBalances();
+      }else{
+        pageTitle.textContent = 'Afiliados';
+        pageSubtitle.textContent = 'Contagem visual';
+        fab.classList.remove('hidden');
+        loadAffiliates();
+      }
+    }
+
+    async function safeRpc(name, params={}){
+      const { data, error } = await supabase.rpc(name, params);
+      if(error) throw error;
+      return data;
+    }
+
+    function toast(msg){
+      alert(msg);
+    }
+
+    // ==================================================
+    // INVENTÁRIO
+    // ==================================================
+    async function loadProducts(){
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id', { ascending:true });
+
+      if(error){
+        console.error(error);
+        toast('Erro ao carregar produtos');
+        return;
+      }
+
+      const list = document.getElementById('inventoryList');
+
+      if(!data || !data.length){
+        list.innerHTML = `<div class="card empty">Sem produtos.</div>`;
+        return;
+      }
+
+      list.innerHTML = data.map(p => `
+        <div class="card inventory-row">
+          <div class="product-id">${p.id}</div>
+          <img class="product-img" src="${productImage(p.id)}" alt="Produto ${p.id}" />
+          <button class="icon-btn" onclick="changeStock(${p.id}, 1)">+</button>
+          <div class="qty">${p.stock}</div>
+          <button class="icon-btn" ${p.stock <= 0 ? 'disabled' : ''} onclick="changeStock(${p.id}, -1)">-</button>
+          <button class="sell-btn" ${p.stock <= 0 ? 'disabled' : ''} onclick="openSellModal(${p.id})">VENDER</button>
+        </div>
+      `).join('');
+    }
+
+    async function changeStock(productId, delta){
+      try{
+        if(delta > 0){
+          await safeRpc('increment_product_stock', { p_product_id: productId, p_amount: 1 });
+        }else{
+          await safeRpc('decrement_product_stock_no_sale', { p_product_id: productId, p_amount: 1 });
+        }
+        await loadProducts();
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao alterar stock');
+      }
+    }
+
+    // ==================================================
+    // VENDA
+    // ==================================================
+    function openSellModal(productId){
+      openModal(`
+        <div class="modal-header">
+          <h2 class="modal-title">Nova venda</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <img src="${CLOSE_ICON}" alt="Fechar">
+          </button>
+        </div>
+
+        <div class="detail-top">
+          <img class="detail-img" src="${productImage(productId)}" alt="Produto ${productId}">
+          <div>
+            <div class="detail-id">Produto</div>
+            <div class="detail-date">ID ${productId}</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Preço</label>
+          <select id="sellPricePreset" class="select" onchange="toggleCustomPrice()">
+            <option value="20">20€</option>
+            <option value="15">15€</option>
+            <option value="17">17€</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+
+        <div class="field hidden" id="customPriceWrap">
+          <label>Preço personalizado</label>
+          <input id="sellCustomPrice" class="input" type="number" step="0.01" inputmode="decimal" placeholder="0.00">
+        </div>
+
+        <div class="field">
+          <label>Cliente</label>
+          <input id="sellClient" class="input" type="text" placeholder="Nome do cliente">
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Estado</label>
+            <select id="sellPaymentStatus" class="select">
+              <option value="Pago">Pago</option>
+              <option value="Por pagar">Por pagar</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Pagamento</label>
+            <select id="sellPaymentMethod" class="select">
+              <option value="MB Way">MB Way</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Observações</label>
+          <textarea id="sellObservations" class="textarea" placeholder="Opcional"></textarea>
+        </div>
+
+        <div class="obs-actions">
+          <button class="secondary-btn" onclick="closeModal()">Cancelar</button>
+          <button class="primary-btn" onclick="confirmSale(${productId})">Confirmar</button>
+        </div>
+      `);
+    }
+
+    window.toggleCustomPrice = function(){
+      const preset = document.getElementById('sellPricePreset').value;
+      document.getElementById('customPriceWrap').classList.toggle('hidden', preset !== 'custom');
+    }
+
+    window.confirmSale = async function(productId){
+      try{
+        const preset = document.getElementById('sellPricePreset').value;
+        const customPrice = document.getElementById('sellCustomPrice').value;
+        const client = document.getElementById('sellClient').value.trim();
+        const paymentStatus = document.getElementById('sellPaymentStatus').value;
+        const paymentMethod = document.getElementById('sellPaymentMethod').value;
+        const observations = document.getElementById('sellObservations').value.trim();
+
+        let price = preset === 'custom' ? Number(customPrice) : Number(preset);
+
+        if(!client){
+          toast('Cliente é obrigatório');
+          return;
+        }
+
+        if(!price || price <= 0){
+          toast('Preço inválido');
+          return;
+        }
+
+        await safeRpc('create_sale_and_decrement_stock', {
+          p_product_id: productId,
+          p_price: price,
+          p_client: client,
+          p_sale_date: todayDate(),
+          p_sale_time: nowTime(),
+          p_payment_status: paymentStatus,
+          p_payment_method: paymentMethod,
+          p_observations: observations
+        });
+
+        closeModal();
+        await loadProducts();
+        await loadBalances();
+
+        if(currentScreen === 'cart'){
+          await reloadSales(true);
+        }
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao confirmar venda');
+      }
+    }
+
+    // ==================================================
+    // SALDOS
+    // ==================================================
+    async function loadBalances(){
+      const { data, error } = await supabase
+        .from('balances')
+        .select('*')
+        .order('person_name', { ascending:true });
+
+      if(error){
+        console.error(error);
+        toast('Erro ao carregar saldos');
+        return;
+      }
+
+      const map = {};
+      (data || []).forEach(row => map[row.person_name] = row);
+
+      const alony = map['Tomás Alony'] || { current_balance:0, total_withdrawn:0, total_profit:0 };
+      const silva = map['Tomás Silva'] || { current_balance:0, total_withdrawn:0, total_profit:0 };
+
+      document.getElementById('saldo-alony').textContent = euro(alony.current_balance);
+      document.getElementById('withdrawn-alony').textContent = euro(alony.total_withdrawn);
+      document.getElementById('profit-alony').textContent = euro(alony.total_profit);
+
+      document.getElementById('saldo-silva').textContent = euro(silva.current_balance);
+      document.getElementById('withdrawn-silva').textContent = euro(silva.total_withdrawn);
+      document.getElementById('profit-silva').textContent = euro(silva.total_profit);
+    }
+
+    window.openWithdraw = async function(personName){
+      const { data, error } = await supabase
+        .from('balances')
+        .select('*')
+        .eq('person_name', personName)
+        .single();
+
+      if(error){
+        console.error(error);
+        toast('Erro ao abrir levantamento');
+        return;
+      }
+
+      openModal(`
+        <div class="modal-header">
+          <h2 class="modal-title">Levantar</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <img src="${CLOSE_ICON}" alt="Fechar">
+          </button>
+        </div>
+
+        <div class="detail-item mb-16">
+          <div class="detail-label">${esc(personName)}</div>
+          <div class="detail-value">Saldo disponível: ${euro(data.current_balance)}</div>
+        </div>
+
+        <div class="field">
+          <label>Valor a levantar</label>
+          <input id="withdrawAmount" class="input" type="number" step="0.01" inputmode="decimal" placeholder="0.00">
+        </div>
+
+        <div class="obs-actions">
+          <button class="secondary-btn" onclick="closeModal()">Cancelar</button>
+          <button class="primary-btn" onclick="confirmWithdraw('${esc(personName)}', ${Number(data.current_balance)})">Confirmar</button>
+        </div>
+      `);
+    }
+
+    window.confirmWithdraw = async function(personName, currentBalance){
+      try{
+        const amount = Number(document.getElementById('withdrawAmount').value);
+
+        if(!amount || amount <= 0){
+          toast('Valor inválido');
+          return;
+        }
+
+        if(amount > Number(currentBalance)){
+          toast('Não podes levantar mais do que o saldo');
+          return;
+        }
+
+        await safeRpc('withdraw_balance', {
+          p_person_name: personName,
+          p_amount: amount
+        });
+
+        closeModal();
+        await loadBalances();
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao levantar valor');
+      }
+    }
+
+    // ==================================================
+    // VENDAS
+    // ==================================================
+    async function reloadSales(reset=false){
+      if(reset){
+        salesOffset = 0;
+        document.getElementById('salesList').innerHTML = '';
+      }
+      await fetchSales();
+    }
+
+    async function fetchSales(){
+      const { data, error } = await supabase
+        .from('sales')
+        .select('*')
+        .order('sale_date', { ascending:false })
+        .order('sale_time', { ascending:false })
+        .range(salesOffset, salesOffset + salesLimit - 1);
+
+      if(error){
+        console.error(error);
+        toast('Erro ao carregar vendas');
+        return;
+      }
+
+      const list = document.getElementById('salesList');
+
+      if(salesOffset === 0 && (!data || !data.length)){
+        list.innerHTML = `<div class="card empty">Sem vendas.</div>`;
+        document.getElementById('loadMoreSalesBtn').classList.add('hidden');
+        salesHasMore = false;
+        return;
+      }
+
+      const html = (data || []).map((sale, index) => `
+        <div class="card" onclick="openSaleDetail(${sale.id})">
+          <div class="sale-card">
+            <img class="sale-thumb" src="${productImage(sale.product_id)}" alt="Produto ${sale.product_id}">
+            <div class="sale-meta">
+              <div class="sale-date">${formatDate(sale.sale_date, sale.sale_time)}</div>
+            </div>
+          </div>
+          ${index === (data.length - 1) ? '' : '<div class="sale-sep"></div>'}
+        </div>
+      `).join('');
+
+      list.insertAdjacentHTML('beforeend', html);
+
+      salesHasMore = (data || []).length === salesLimit;
+      document.getElementById('loadMoreSalesBtn').classList.toggle('hidden', !salesHasMore);
+      salesOffset += (data || []).length;
+    }
+
+    window.loadMoreSales = async function(){
+      if(salesHasMore) await fetchSales();
+    }
+
+    window.openSaleDetail = async function(saleId){
+      const { data, error } = await supabase
+        .from('sales')
+        .select('*')
+        .eq('id', saleId)
+        .single();
+
+      if(error){
+        console.error(error);
+        toast('Erro ao abrir venda');
+        return;
+      }
+
+      openModal(`
+        <div class="modal-header">
+          <h2 class="modal-title">Detalhe da venda</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <img src="${CLOSE_ICON}" alt="Fechar">
+          </button>
+        </div>
+
+        <div class="detail-top">
+          <img class="detail-img" src="${productImage(data.product_id)}" alt="Produto ${data.product_id}">
+          <div>
+            <div class="detail-id">Produto ${data.product_id}</div>
+            <div class="detail-date">${formatDate(data.sale_date, data.sale_time)}</div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Preço</div>
+            <div class="detail-value">${euro(data.price)}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">Cliente</div>
+            <div class="detail-value">${esc(data.client)}</div>
+          </div>
+
+          <div class="field">
+            <label>Estado</label>
+            <select id="detailPaymentStatus" class="select">
+              <option value="Pago" ${data.payment_status === 'Pago' ? 'selected' : ''}>Pago</option>
+              <option value="Por pagar" ${data.payment_status === 'Por pagar' ? 'selected' : ''}>Por pagar</option>
+            </select>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">Método de pagamento</div>
+            <div class="detail-value">${esc(data.payment_method)}</div>
+          </div>
+
+          <div class="obs-box">
+            <div class="detail-label">Observações</div>
+            <div id="obsView">${data.observations ? esc(data.observations).replace(/\n/g, '<br>') : '<span class="muted">Vazio</span>'}</div>
+
+            <div class="obs-actions">
+              <button class="secondary-btn" onclick="enableObservationEdit(${data.id}, \`${esc(data.observations || '').replace(/`/g, '\\`')}\`)">Editar</button>
+              <button class="primary-btn" onclick="savePaymentStatusOnly(${data.id})">Guardar estado</button>
+            </div>
+
+            <div id="obsEditWrap" class="hidden">
+              <div class="field" style="margin-top:10px">
+                <textarea id="obsTextarea" class="textarea">${esc(data.observations || '')}</textarea>
+              </div>
+              <div class="obs-actions">
+                <button class="primary-btn" onclick="saveObservation(${data.id})">✔️ guardar</button>
+                <button class="secondary-btn" onclick="cancelObservationEdit()">
+                  <img src="${CANCEL_EDIT_ICON}" alt="Cancelar" style="width:16px;height:16px;vertical-align:middle;margin-right:6px">
+                  X cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    window.savePaymentStatusOnly = async function(saleId){
+      try{
+        const status = document.getElementById('detailPaymentStatus').value;
+        const { error } = await supabase
+          .from('sales')
+          .update({ payment_status: status })
+          .eq('id', saleId);
+
+        if(error) throw error;
+        toast('Estado guardado');
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao guardar estado');
+      }
+    }
+
+    window.enableObservationEdit = function(){
+      document.getElementById('obsEditWrap').classList.remove('hidden');
+    }
+
+    window.cancelObservationEdit = function(){
+      document.getElementById('obsEditWrap').classList.add('hidden');
+    }
+
+    window.saveObservation = async function(saleId){
+      try{
+        const status = document.getElementById('detailPaymentStatus').value;
+        const observations = document.getElementById('obsTextarea').value;
+
+        const { error } = await supabase
+          .from('sales')
+          .update({
+            payment_status: status,
+            observations
+          })
+          .eq('id', saleId);
+
+        if(error) throw error;
+
+        closeModal();
+        openSaleDetail(saleId);
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao guardar observações');
+      }
+    }
+
+    // ==================================================
+    // AFILIADOS
+    // ==================================================
+    async function loadAffiliates(){
+      const { data, error } = await supabase
+        .from('affiliates')
+        .select('*')
+        .order('id', { ascending:true });
+
+      if(error){
+        console.error(error);
+        toast('Erro ao carregar afiliados');
+        return;
+      }
+
+      const list = document.getElementById('affiliateList');
+
+      if(!data || !data.length){
+        list.innerHTML = `<div class="card empty">Sem afiliados.</div>`;
+        return;
+      }
+
+      list.innerHTML = data.map(a => `
+        <div class="card affiliate-row">
+          <img class="affiliate-avatar" src="${AFFILIATE_DEFAULT_IMG}" alt="Afiliado">
+          <div>
+            <div class="affiliate-name">${esc(a.name)}</div>
+            <div class="affiliate-sales">${a.sales_count} vendas</div>
+          </div>
+          <div class="affiliate-actions">
+            <button class="small-btn" onclick="changeAffiliateSales(${a.id}, 1)">+</button>
+            <button class="small-btn" ${a.sales_count <= 0 ? 'disabled' : ''} onclick="changeAffiliateSales(${a.id}, -1)">-</button>
+            <button class="remove-btn" onclick="confirmRemoveAffiliate(${a.id}, '${esc(a.name)}')">
+              <img src="${REMOVE_ICON}" alt="Remover">
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAffiliateCreate(){
+      openModal(`
+        <div class="modal-header">
+          <h2 class="modal-title">Novo afiliado</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <img src="${CLOSE_ICON}" alt="Fechar">
+          </button>
+        </div>
+
+        <div class="field">
+          <label>Nome</label>
+          <input id="affiliateName" class="input" type="text" placeholder="Nome do afiliado">
+        </div>
+
+        <div class="obs-actions">
+          <button class="secondary-btn" onclick="closeModal()">Cancelar</button>
+          <button class="primary-btn" onclick="createAffiliate()">Confirmar</button>
+        </div>
+      `);
+    }
+
+    window.createAffiliate = async function(){
+      try{
+        const name = document.getElementById('affiliateName').value.trim();
+        if(!name){
+          toast('Nome obrigatório');
+          return;
+        }
+
+        const { error } = await supabase
+          .from('affiliates')
+          .insert([{ name, sales_count:0 }]);
+
+        if(error) throw error;
+
+        closeModal();
+        await loadAffiliates();
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao criar afiliado');
+      }
+    }
+
+    window.changeAffiliateSales = async function(affiliateId, delta){
+      try{
+        await safeRpc('change_affiliate_sales_count', {
+          p_affiliate_id: affiliateId,
+          p_delta: delta
+        });
+        await loadAffiliates();
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao alterar afiliado');
+      }
+    }
+
+    window.confirmRemoveAffiliate = function(affiliateId, affiliateName){
+      openModal(`
+        <div class="modal-header">
+          <h2 class="modal-title">Remover afiliado</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <img src="${CLOSE_ICON}" alt="Fechar">
+          </button>
+        </div>
+
+        <div class="detail-item mb-16">
+          <div class="detail-label">Afiliado</div>
+          <div class="detail-value">${esc(affiliateName)}</div>
+        </div>
+
+        <div class="obs-actions">
+          <button class="secondary-btn" onclick="closeModal()">Cancelar</button>
+          <button class="danger-btn" onclick="removeAffiliate(${affiliateId})">Confirmar</button>
+        </div>
+      `);
+    }
+
+    window.removeAffiliate = async function(affiliateId){
+      try{
+        const { error } = await supabase
+          .from('affiliates')
+          .delete()
+          .eq('id', affiliateId);
+
+        if(error) throw error;
+
+        closeModal();
+        await loadAffiliates();
+      }catch(err){
+        console.error(err);
+        toast(err.message || 'Erro ao remover afiliado');
+      }
+    }
+
+    // ==================================================
+    // INIT
+    // ==================================================
+    async function init(){
+      await loadProducts();
+      await loadBalances();
+      await loadAffiliates();
+    }
+
+    window.closeModal = closeModal;
+    window.setScreen = setScreen;
+    window.changeStock = changeStock;
+    window.openSellModal = openSellModal;
+
+    init();
+  </script>
 </body>
 </html>
